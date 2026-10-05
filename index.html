@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QCM - Interagir et échanger en ligne</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --card-hover: #262626;
+            --text-color: #E0E0E0;
+            --text-muted: #9E9E9E;
+            --accent-color: #DEFF9A;
+            --accent-hover: #c9f578;
+            --correct-color: #4EAE67;
+            --correct-bg: rgba(78, 174, 103, 0.15);
+            --wrong-color: #FF6B6B;
+            --wrong-bg: rgba(255, 107, 107, 0.15);
+            --border-color: #2F2F2F;
+            --border-radius: 14px;
+            --font-stack: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            line-height: 1.5;
+        }
+
+        .quiz-wrapper {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 780px;
+            padding: 28px;
+            position: relative;
+        }
+
+        /* En-tête */
+        .quiz-header {
+            margin-bottom: 22px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 18px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: rgba(222, 255, 154, 0.12);
+            color: var(--accent-color);
+            border: 1px solid rgba(222, 255, 154, 0.25);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-pill {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background-color: #121212;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.55rem;
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+
+        /* Barre de progression */
+        .progress-section {
+            margin-top: 14px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background-color: #121212;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #A8E85A, var(--accent-color));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+
+        /* Zone de question */
+        .question-card {
+            margin: 20px 0;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .question-title {
+            font-size: 1.18rem;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        /* Grille des réponses */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-button {
+            background-color: #232323;
+            border: 1.5px solid #333333;
+            border-radius: 10px;
+            color: var(--text-color);
+            padding: 14px 16px;
+            font-size: 0.98rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-family: inherit;
+        }
+
+        .option-button:hover:not(:disabled) {
+            background-color: var(--card-hover);
+            border-color: var(--accent-color);
+            transform: translateX(4px);
+        }
+
+        .option-button:disabled {
+            cursor: default;
+        }
+
+        .option-button.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-color);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .option-button.correct::after {
+            content: "✓";
+            color: var(--correct-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .option-button.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-color);
+            color: #FFFFFF;
+        }
+
+        .option-button.wrong::after {
+            content: "✕";
+            color: var(--wrong-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .option-button.dimmed {
+            opacity: 0.45;
+        }
+
+        /* Feedback */
+        .feedback-container {
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .feedback-container.correct {
+            background-color: var(--correct-bg);
+            border-left: 4px solid var(--correct-color);
+        }
+
+        .feedback-container.wrong {
+            background-color: var(--wrong-bg);
+            border-left: 4px solid var(--wrong-color);
+        }
+
+        .feedback-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .feedback-container.correct .feedback-title {
+            color: var(--correct-color);
+        }
+
+        .feedback-container.wrong .feedback-title {
+            color: var(--wrong-color);
+        }
+
+        .feedback-text {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            line-height: 1.45;
+        }
+
+        /* Actions */
+        .actions-row {
+            margin-top: 22px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-action {
+            background-color: var(--accent-color);
+            color: #121212;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(222, 255, 154, 0.25);
+        }
+
+        .btn-action:disabled {
+            background-color: #2D2D2D;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Écran des résultats */
+        .results-view {
+            text-align: center;
+            padding: 10px 0;
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .score-circle-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            background: #171717;
+            border: 4px solid var(--accent-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 24px rgba(222, 255, 154, 0.15);
+        }
+
+        .score-val {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+
+        .score-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .results-view h2 {
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+        }
+
+        .result-description {
+            font-size: 0.98rem;
+            color: var(--text-color);
+            max-width: 580px;
+            margin: 0 auto 24px auto;
+            line-height: 1.5;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 360px;
+            margin: 0 auto 24px auto;
+        }
+
+        .stat-box {
+            background-color: #151515;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .stat-num {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .stat-num.succ { color: var(--correct-color); }
+        .stat-num.err { color: var(--wrong-color); }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .quiz-wrapper {
+                padding: 18px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .question-title {
+                font-size: 1.05rem;
+            }
+            .option-button {
+                padding: 12px 14px;
+                font-size: 0.9rem;
+            }
+            .score-circle-wrapper {
+                width: 130px;
+                height: 130px;
+            }
+            .score-val {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-wrapper">
+        <!-- VUE DU QUESTIONNAIRE -->
+        <div id="quiz-view">
+            <div class="quiz-header">
+                <div class="header-top">
+                    <span class="tag-badge">💬 Communication Numérique</span>
+                    <span class="score-pill" id="live-score">Score: 0 / 40</span>
+                </div>
+                <h1>Interagir et échanger en ligne</h1>
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span>Progression</span>
+                        <span id="progress-text">Question 1 sur 40</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="question-index-label">Question 1</div>
+                <div class="question-title" id="question-text">Chargement de la question...</div>
+                <div class="options-list" id="options-container">
+                    <!-- Généré dynamiquement en JS -->
+                </div>
+            </div>
+
+            <div class="feedback-container" id="feedback-box">
+                <div class="feedback-title" id="feedback-title">Bonne réponse !</div>
+                <div class="feedback-text" id="feedback-desc">Explication pédagogique...</div>
+            </div>
+
+            <div class="actions-row">
+                <button class="btn-action" id="next-btn" disabled>Question suivante ➔</button>
+            </div>
+        </div>
+
+        <!-- VUE DES RÉSULTATS -->
+        <div class="results-view" id="results-view">
+            <span class="tag-badge" style="margin-bottom: 14px;">Bilan Citoyen Numérique</span>
+            
+            <div class="score-circle-wrapper">
+                <div class="score-val" id="final-percent">0%</div>
+                <div class="score-sub">Score Final</div>
+            </div>
+
+            <h2 id="result-title-text">Certification Citoyen Numérique</h2>
+            <p class="result-description" id="result-desc-text">Commentaire d'évaluation...</p>
+
+            <div class="summary-stats">
+                <div class="stat-box">
+                    <div class="stat-num succ" id="stat-correct-count">0</div>
+                    <div class="stat-label">Réponses correctes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num err" id="stat-wrong-count">0</div>
+                    <div class="stat-label">Erreurs / Pièges</div>
+                </div>
+            </div>
+
+            <button class="btn-action" onclick="restartQuiz()">🔄 Recommencer le test</button>
+        </div>
+    </div>
+
+    <script>
+        const rawQuestions = [
+            // Slide 2 : Pourquoi communique-t-on en ligne ?
+            {
+                q: "Pourquoi échange-t-on en ligne avec ses proches (famille) ?",
+                options: [
+                    "Pour garder le contact à la maison",
+                    "Pour recevoir une note trimestrielle",
+                    "Pour justifier officiellement une absence scolaire",
+                    "Pour remplacer l'ENT du collège"
+                ],
+                answer: 0,
+                feedback: "Échanger avec ses proches permet avant tout de garder le lien et de communiquer en famille à la maison."
+            },
+            {
+                q: "Quel est l'objectif principal de la communication en ligne avec ses camarades de classe ?",
+                options: [
+                    "Collaborer sur des projets scolaires et s'entraider",
+                    "Créer des rumeurs anonymes",
+                    "Envoyer des devoirs sans demander l'avis du professeur",
+                    "Remplacer les cours en présentiel"
+                ],
+                answer: 0,
+                feedback: "Avec ses camarades, les outils numériques servent à coopérer efficacement sur les projets (comme un exposé) et à s'entraider."
+            },
+            {
+                q: "Pourquoi un élève communique-t-il en ligne avec ses professeurs ?",
+                options: [
+                    "Pour poser des questions sur les cours et suivre sa scolarité",
+                    "Pour discuter de ses jeux vidéo préférés le week-end",
+                    "Pour envoyer des messages de nuit",
+                    "Pour publier des vidéos humoristiques"
+                ],
+                answer: 0,
+                feedback: "La communication avec les enseignants est strictement pédagogique : clarification d'un devoir, suivi scolaire et questions sur le cours."
+            },
+
+            // Slide 3 : Les 3 grands outils du numérique
+            {
+                q: "Quels sont les 3 grands outils de communication numérique présentés dans le cours ?",
+                options: [
+                    "L'E-mail (Courriel), La Messagerie instantanée, La Visioconférence",
+                    "Le SMS, Le Fax, Le Courrier postal",
+                    "Le Blog, Le Forum de jeux, Le Cloud",
+                    "Le Tableur, Le Traitement de texte, Le Diaporama"
+                ],
+                answer: 0,
+                feedback: "Les trois piliers étudiés sont le courriel (officiel), la messagerie instantanée (rapide) et la visioconférence (directe/vidéo)."
+            },
+            {
+                q: "Quel outil est qualifié « d'officiel » pour les messages sérieux, l'administration ou les professeurs ?",
+                options: [
+                    "L'E-mail (Courriel)",
+                    "La messagerie de groupe sur réseau social",
+                    "La section commentaire d'une vidéo en ligne",
+                    "Le chat public d'un jeu vidéo"
+                ],
+                answer: 0,
+                feedback: "L'e-mail est l'outil formel et institutionnel de référence pour toute communication administrative ou professorale."
+            },
+            {
+                q: "Quel outil numérique est conçu pour des discussions instantanées et des échanges rapides en groupe ?",
+                options: [
+                    "La Messagerie instantanée (Tchat)",
+                    "Le courrier recommandé",
+                    "Le fichier PDF partagé en lecture seule",
+                    "La clé USB"
+                ],
+                answer: 0,
+                feedback: "La messagerie permet un dialogue en temps réel par de courts messages entre membres d'un projet."
+            },
+            {
+                q: "Quel outil permet de se voir et de se parler à distance et en temps réel ?",
+                options: [
+                    "La Visioconférence",
+                    "Le traitement de texte",
+                    "Le tableur",
+                    "Le courriel avec copie cachée"
+                ],
+                answer: 0,
+                feedback: "La visio associe le flux vidéo et audio en direct pour des réunions à distance."
+            },
+
+            // Slide 4 : L'E-mail, ton outil officiel
+            {
+                q: "Au collège, quel outil de messagerie utilise-t-on EXCLUSIVEMENT pour contacter l'équipe éducative ?",
+                options: [
+                    "La messagerie officielle de l'ENT (Pronote, MonBureauNumérique...)",
+                    "Les messages privés sur Instagram ou TikTok",
+                    "Son adresse e-mail personnelle non sécurisée",
+                    "Un groupe WhatsApp public"
+                ],
+                answer: 0,
+                feedback: "Au collège, le cadre officiel impose l'usage exclusif de l'ENT de l'établissement (Pronote, etc.)."
+            },
+            {
+                q: "Pour quelles situations l'e-mail est-il parfaitement adapté ?",
+                options: [
+                    "Poser une question précise sur un devoir ou justifier une absence",
+                    "Raconter sa journée à tous ses amis",
+                    "Envoyer 50 messages de deux mots en une minute",
+                    "Faire des blagues en direct pendant un cours"
+                ],
+                answer: 0,
+                feedback: "L'e-mail est réservé aux démarches sérieuses nécessitant un écrit structuré et traçable."
+            },
+            {
+                q: "Quel avantage offre la « trace écrite » générée par un e-mail ?",
+                options: [
+                    "Le message reste enregistré de façon claire, datée et ordonnée",
+                    "Le message s'autodétruit après 10 secondes",
+                    "Le message est publié sur Internet pour tout le monde",
+                    "Le message attribue automatiquement une bonne note"
+                ],
+                answer: 0,
+                feedback: "La trace écrite permet de conserver une preuve claire, datée et ordonnée de la demande et de sa réponse."
+            },
+
+            // Slide 5 : L'anatomie d'un E-mail
+            {
+                q: "Dans un e-mail, à quoi correspond le champ « À » (To) ?",
+                options: [
+                    "Au destinataire principal (la personne à qui l'on s'adresse directement)",
+                    "Aux personnes qui reçoivent le message en cachette",
+                    "Au titre résumé du message",
+                    "À la liste de tous les élèves du collège"
+                ],
+                answer: 0,
+                feedback: "Le champ 'À' désigne la personne directement concernée par le message (ex: le professeur à qui l'on pose une question)."
+            },
+            {
+                q: "Dans un e-mail, quel est le rôle du champ « Cc » (Copie conforme) ?",
+                options: [
+                    "Informer une personne qui n'a pas besoin de répondre (ex: le professeur principal)",
+                    "Masquer complètement l'adresse e-mail aux yeux de tous",
+                    "Joindre un fichier PDF de plusieurs mégaoctets",
+                    "Corriger automatiquement les fautes d'orthographe"
+                ],
+                answer: 0,
+                feedback: "Le champ 'Cc' sert à tenir quelqu'un au courant pour information sans exiger de réponse de sa part."
+            },
+            {
+                q: "Que signifie le sigle « Cci » (Copie conforme invisible / cachée) ?",
+                options: [
+                    "Destinataire masqué dont l'adresse n'est pas visible par les autres destinataires",
+                    "Copie réservée uniquement à l'imprimante",
+                    "Courriel certifié par Internet",
+                    "Message prioritaire urgent"
+                ],
+                answer: 0,
+                feedback: "'Cci' garantit que personne dans le groupe ne verra les adresses électroniques des autres destinataires cachés."
+            },
+            {
+                q: "Quand est-il indispensable d'utiliser le champ « Cci » ?",
+                options: [
+                    "Lorsqu'on envoie un mail à un groupe sans vouloir divulguer les adresses personnelles de chacun",
+                    "Lorsqu'on écrit à un seul professeur",
+                    "Lorsqu'on a oublié le sujet du devoir",
+                    "Lorsqu'on veut que tout le monde réponde en même temps"
+                ],
+                answer: 0,
+                feedback: "Le champ Cci protège la vie privée en masquant les adresses personnelles des membres d'une liste de diffusion."
+            },
+            {
+                q: "À quoi sert la ligne « Objet » dans un e-mail ?",
+                options: [
+                    "À résumer clairement le sujet du message en quelques mots",
+                    "À écrire la totalité du texte de son message",
+                    "À indiquer son mot de passe de session",
+                    "À insérer une photo de vacances"
+                ],
+                answer: 0,
+                feedback: "L'Objet est une courte phrase résumant l'intention du message pour que le destinataire sache de quoi il s'agit dès sa boîte de réception."
+            },
+
+            // Slide 6 : Rédiger un e-mail parfait
+            {
+                q: "Par quoi doit OBLIGATOIREMENT commencer un e-mail respectueux ?",
+                options: [
+                    "Une formule de politesse adaptée (ex: « Bonjour Monsieur » ou « Bonjour Madame »)",
+                    "Une abréviation du type « Slt prof »",
+                    "Le corps du texte directement sans formule d'accueil",
+                    "Des points d'exclamation en grand nombre"
+                ],
+                answer: 0,
+                feedback: "Tout courriel commence obligatoirement par une salutation courtoise et formelle."
+            },
+            {
+                q: "Que doit contenir la signature à la fin d'un e-mail destiné à un enseignant ?",
+                options: [
+                    "Son Prénom, son Nom et sa Classe",
+                    "Uniquement un pseudo de jeu vidéo",
+                    "Son numéro de téléphone secret",
+                    "Une série d'emojis"
+                ],
+                answer: 0,
+                feedback: "Indiquer 'Prénom, Nom et Classe' permet au professeur d'identifier immédiatement l'élève parmi ses différentes classes."
+            },
+            {
+                q: "Pourquoi est-il STRICTEMENT INTERDIT d'écrire son texte en MAJUSCULES sur Internet ?",
+                options: [
+                    "Parce que sur le Web, écrire en majuscules équivaut à CRIER",
+                    "Parce que l'ordinateur s'éteint si on appuie sur la touche majuscule",
+                    "Parce que le message ne pourra jamais être distribué",
+                    "Parce que les majuscules prennent trop de mémoire sur le Cloud"
+                ],
+                answer: 0,
+                feedback: "Dans la convention numérique, les MAJUSCULES sont perçues comme une agression ou un cri."
+            },
+            {
+                q: "Parmi les erreurs suivantes, laquelle faut-il ABSOLUMENT éviter lors de l'envoi d'un mail ?",
+                options: [
+                    "Rédiger tout son long message dans la ligne 'Objet'",
+                    "Relire son texte pour corriger les fautes",
+                    "Indiquer sa classe dans la signature",
+                    "Ajouter une formule de politesse"
+                ],
+                answer: 0,
+                feedback: "La ligne Objet n'est qu'un titre : tout le développement doit être rédigé dans le corps du message."
+            },
+            {
+                q: "Que risque-t-on si l'on utilise un langage SMS (ex: 'slt g fini le devoir') avec un professeur ?",
+                options: [
+                    "D'être irrespectueux et de rendre son message incompréhensible ou non professionnel",
+                    "De recevoir un virus dans son ordinateur",
+                    "De bloquer la messagerie du collège",
+                    "D'effacer son devoir enregistré"
+                ],
+                answer: 0,
+                feedback: "Le langage SMS est exclu du cadre scolaire : il nuit à la clarté et manque de respect envers l'interlocuteur."
+            },
+
+            // Slide 7 : La Messagerie Instantanée (Tchat)
+            {
+                q: "Quels types de contenus courts peut-on transmettre via la messagerie instantanée ?",
+                options: [
+                    "Du texte, des messages vocaux ou des images en temps réel",
+                    "Uniquement des disques durs complets",
+                    "Des bulletins scolaires officiels",
+                    "Des formulaires d'inscription au brevet"
+                ],
+                answer: 0,
+                feedback: "La messagerie permet des échanges rapides et multimodaux (texte, voix, images légères)."
+            },
+            {
+                q: "Quel est l'intérêt d'un groupe de discussion instantanée pour les élèves ?",
+                options: [
+                    "Organiser facilement un projet scolaire à plusieurs (ex: un exposé de SVT)",
+                    "Jouer en réseau pendant les heures de cours",
+                    "Transmettre ses identifiants à toute la classe",
+                    "Supprimer les devoirs donnés par les professeurs"
+                ],
+                answer: 0,
+                feedback: "Les groupes permettent de coordonner les tâches et de répartir le travail d'équipe facilement."
+            },
+            {
+                q: "Pourquoi une grande prudence est-elle indispensable sur les applications de messagerie instantanée ?",
+                options: [
+                    "Parce que tout ce qui est écrit peut faire l'objet d'une capture d'écran (screenshot)",
+                    "Parce que les messages s'effacent toujours au bout de 2 secondes",
+                    "Parce qu'il est impossible de bloquer un utilisateur",
+                    "Parce que le clavier s'abîme plus vite"
+                ],
+                answer: 0,
+                feedback: "Même sur un tchat privé, n'importe quel participant peut capturer l'écran : tout écrit laisse des traces potentielles."
+            },
+
+            // Slide 8 : La Nétiquette (Les 4 règles du tchat)
+            {
+                q: "Que préconise la règle de « Respect et courtoisie » de la Nétiquette ?",
+                options: [
+                    "Pas d'insultes ni de moqueries, même sous couvert de plaisanterie",
+                    "Obligation de tutoyer les adultes du collège",
+                    "Possibilité de se moquer si c'est pour rigoler",
+                    "Envoyer 10 messages par seconde pour saluer ses amis"
+                ],
+                answer: 0,
+                feedback: "Le respect doit être absolu : l'humour ne justifie jamais les insultes ou le rabaissement d'autrui."
+            },
+            {
+                q: "Quelle règle concerne les « Horaires adaptés » pour l'envoi de messages scolaires ?",
+                options: [
+                    "Ne pas envoyer de messages tard le soir ni pendant les heures de cours",
+                    "Envoyer des messages obligatoirement entre minuit et 5h du matin",
+                    "Écrire à son professeur pendant qu'il fait cours",
+                    "Répondre en moins de 30 secondes quelle que soit l'heure"
+                ],
+                answer: 0,
+                feedback: "Il faut respecter le repos des camarades et le temps de travail des adultes en évitant les messages tardifs ou en cours."
+            },
+            {
+                q: "Concernant la « Confidentialité » sur un groupe de tchat, que ne faut-il JAMAIS faire ?",
+                options: [
+                    "Partager des photos ou des informations personnelles privées",
+                    "Poser une question sur l'exercice de mathématiques",
+                    "Donner la date du prochain contrôle",
+                    "Dire poliment au revoir en quittant la discussion"
+                ],
+                answer: 0,
+                feedback: "Ne jamais diffuser de photos intimes, adresses postales ou numéros de téléphone sur un groupe."
+            },
+            {
+                q: "Pourquoi la règle de « Lisibilité » recommande-t-elle d'éviter les abréviations incompréhensibles ?",
+                options: [
+                    "Pour s'assurer que l'ensemble des membres du groupe comprenne le message",
+                    "Pour économiser l'électricité du serveur",
+                    "Pour masquer le texte aux non-membres",
+                    "Pour écrire plus vite que les autres"
+                ],
+                answer: 0,
+                feedback: "Un message clair et lisible sans jargon excessif évite les quiproquos au sein d'une équipe."
+            },
+
+            // Slide 9 : La Visioconférence
+            {
+                q: "Quelle est la règle essentielle concernant le MICRO lors d'une visioconférence collective ?",
+                options: [
+                    "Couper son micro quand on ne parle pas pour éviter les bruits de fond",
+                    "Laisser son micro ouvert avec de la musique en fond sonore",
+                    "Parler en même temps que l'enseignant",
+                    "Crier dans le micro pour tester le son"
+                ],
+                answer: 0,
+                feedback: "Couper son micro hors prise de parole supprime les échos et bruits parasites pour l'ensemble du groupe."
+            },
+            {
+                q: "Comment doit-on demander la parole correctement lors d'une réunion en visioconférence ?",
+                options: [
+                    "En utilisant le bouton de la « main virtuelle »",
+                    "En coupant la parole de la personne qui s'exprime",
+                    "En allumant et éteignant sa caméra dix fois",
+                    "En envoyant un emoji sonore d'alarme"
+                ],
+                answer: 0,
+                feedback: "La main virtuelle permet à l'organisateur de distribuer la parole de façon ordonnée."
+            },
+            {
+                q: "Quel comportement matériel et corporel est attendu lors d'une session de visioconférence ?",
+                options: [
+                    "Soigner sa tenue vestimentaire et s'installer dans un endroit calme",
+                    "Rester allongé dans son lit sous la couette",
+                    "Manger devant la caméra sans faire attention au cours",
+                    "Mettre son téléphone devant l'objectif pour masquer la pièce"
+                ],
+                answer: 0,
+                feedback: "La visio exige une posture respectueuse : être habillé correctement et assis dans un environnement calme propice au travail."
+            },
+
+            // Slide 10 : Le Caméléon Numérique
+            {
+                q: "Quel ton et quel registre adopte-t-on dans la « Vie Privée » (famille et amis proches) ?",
+                options: [
+                    "Langage décontracté, amical et tutoiement ('Tu')",
+                    "Langage strictement administratif et vouvoiement obligatoire",
+                    "Courrier recommandé exclusivement",
+                    "Langage codé sans ponctuation"
+                ],
+                answer: 0,
+                feedback: "Avec ses proches, le ton est convivial, amical et utilise naturellement le tutoiement."
+            },
+            {
+                q: "Dans le « Cadre Scolaire » (collège), quelles règles de langage s'appliquent ?",
+                options: [
+                    "Langage correct et policé avec vouvoiement ('Vous')",
+                    "Langage SMS avec surnoms familiers",
+                    "Tutoiement de rigueur avec la direction",
+                    "Utilisation continue de majuscules"
+                ],
+                answer: 0,
+                feedback: "Au collège, la politesse institutionnelle impose le vouvoiement et un vocabulaire soutenu et respectueux."
+            },
+            {
+                q: "Pourquoi appelle-t-on cette capacité d'adaptation le « Caméléon Numérique » ?",
+                options: [
+                    "Parce qu'on adapte son outil et son langage selon le contexte (privé ou scolaire)",
+                    "Parce qu'on change la couleur de son profil toutes les heures",
+                    "Parce qu'on se cache sous un faux compte",
+                    "Parce qu'on utilise un filtre animalier sur sa caméra"
+                ],
+                answer: 0,
+                feedback: "Tout comme le caméléon adapte sa couleur à son milieu, l'internaute responsable adapte sa posture à son interlocuteur."
+            },
+
+            // Slide 11 : Le Rythme des Échanges
+            {
+                q: "Qu'est-ce qu'un « Échange Ponctuel » en communication numérique ?",
+                options: [
+                    "Une communication unique pour répondre à une question précise (ex: prévenir d'un RDV médical)",
+                    "Un groupe de discussion qui dure toute l'année scolaire",
+                    "Une série d'appels vidéo ininterrompus pendant 8 heures",
+                    "Une lettre manuscrite déposée dans un casier"
+                ],
+                answer: 0,
+                feedback: "L'échange ponctuel a un début et une fin immédiate pour une question précise et délimitée."
+            },
+            {
+                q: "Qu'est-ce qu'un « Échange Récurrent » ?",
+                options: [
+                    "Un fil de discussion suivi qui s'inscrit dans la durée (ex: le groupe d'entraide de la classe)",
+                    "Un e-mail envoyé par erreur et supprimé aussitôt",
+                    "Un mot de passe changé une seule fois",
+                    "Une visioconférence de 2 minutes"
+                ],
+                answer: 0,
+                feedback: "L'échange récurrent maintient un canal permanent d'entraide et d'information sur une période longue."
+            },
+
+            // Slide 12 : Protéger sa vie privée
+            {
+                q: "Quelle est la consigne absolue de sécurité concernant vos « Mots de passe » ?",
+                options: [
+                    "Ne jamais donner ses identifiants (ENT, tchat) à un copain ni à un tiers",
+                    "Les écrire sur une feuille collée derrière son écran au collège",
+                    "Les partager avec tous les membres de son groupe de projet",
+                    "Utiliser le mot de passe '123456' pour ne jamais l'oublier"
+                ],
+                answer: 0,
+                feedback: "Un mot de passe est strictement personnel et secret : le transmettre met en danger l'ensemble de ses données."
+            },
+            {
+                q: "Qu'est-ce que « L'Hameçonnage » (Phishing) et comment s'en prémunir ?",
+                options: [
+                    "Un piège où un inconnu envoie un lien suspect : il ne faut jamais cliquer dessus",
+                    "Une méthode pour télécharger des cours plus rapidement",
+                    "Un logiciel de dessin assisté par ordinateur",
+                    "Une option pour agrandir les photos de profil"
+                ],
+                answer: 0,
+                feedback: "L'hameçonnage utilise des messages frauduleux pour voler vos données : il ne faut jamais cliquer sur un lien suspect."
+            },
+            {
+                q: "Avant d'accepter une invitation ou un message d'un utilisateur en ligne, que devez-vous vérifier ?",
+                options: [
+                    "L'identité réelle de votre interlocuteur",
+                    "La marque de son smartphone",
+                    "Le nombre de jeux vidéo installés sur son compte",
+                    "Sa photo d'arrière-plan"
+                ],
+                answer: 0,
+                feedback: "Il faut toujours contrôler qui se trouve réellement derrière le profil avant d'entamer une discussion."
+            },
+
+            // Slide 13 : Stopper le Cyberharcèlement
+            {
+                q: "Comment se définit le « Cyberharcèlement » selon le cours ?",
+                options: [
+                    "Utiliser les messageries pour moquer, insulter ou exclure une personne de façon répétée",
+                    "Oublier de répondre à un e-mail un dimanche après-midi",
+                    "Poser une question sur un devoir de mathématiques",
+                    "Perdre sa connexion Wi-Fi pendant un cours en ligne"
+                ],
+                answer: 0,
+                feedback: "Le cyberharcèlement repose sur la répétition d'agressions (moqueries, insultes, exclusion) via les outils numériques."
+            },
+            {
+                q: "Face à une situation d'agression ou de cyberharcèlement, quelle est la 1ère étape indispensable ?",
+                options: [
+                    "Garder les preuves en effectuant des captures d'écran sans rien supprimer",
+                    "Répondre immédiatement par des insultes encore plus fortes",
+                    "Supprimer tous ses comptes et formater son ordinateur",
+                    "Garder le secret sans en parler à personne"
+                ],
+                answer: 0,
+                feedback: "Étape 1 : Effectuer immédiatement des captures d'écran datées pour prouver les faits aux adultes."
+            },
+            {
+                q: "Quelle attitude adopter immédiatement envers l'agresseur lors d'une attaque en ligne (Étape 2) ?",
+                options: [
+                    "Ne pas répondre et ignorer totalement les provocations",
+                    "Organiser une dispute en ligne sur le groupe de classe",
+                    "Lui donner son adresse pour s'expliquer",
+                    "Envoyer des photos personnelles"
+                ],
+                answer: 0,
+                feedback: "Étape 2 : Ne pas entrer dans le jeu du harceleur pour ne pas alimenter l'escalade verbale."
+            },
+            {
+                q: "À qui devez-vous obligatoirement signaler une situation anormale (Étape 3) ?",
+                options: [
+                    "À un adulte de confiance (Professeur, CPE, Infirmier scolaire, Parents)",
+                    "À des inconnus sur les réseaux sociaux",
+                    "Uniquement aux camarades de sa classe",
+                    "À personne, il vaut mieux attendre que ça passe"
+                ],
+                answer: 0,
+                feedback: "Étape 3 : Alerter un adulte garantit une prise en charge rapide et sécurisée de la situation."
+            },
+            {
+                q: "Quel est le numéro officiel d'aide d'urgence gratuit et anonyme pour signaler le cyberharcèlement ?",
+                options: [
+                    "Le 3018",
+                    "Le 15",
+                    "Le 18",
+                    "Le 112"
+                ],
+                answer: 0,
+                feedback: "Le 3018 est le numéro national gratuit, anonyme et confidentiel dédié aux jeunes victimes ou témoins de violences numériques."
+            },
+
+            // Slide 14 & 15 : Le Grand Quiz & Les 5 Règles d'Or
+            {
+                q: "Si vous recevez un message inattendu d'un inconnu sur votre messagerie, quelle est la bonne réaction ?",
+                options: [
+                    "Ne pas répondre, ne pas cliquer sur les liens et en parler à un adulte",
+                    "Lui envoyer une photo pour faire connaissance",
+                    "Cliquer tout de suite sur le lien reçu",
+                    "Lui transmettre son numéro de téléphone"
+                ],
+                answer: 0,
+                feedback: "Règle de sécurité : aucun contact avec un inconnu, aucun clic sur un lien suspect, et alerte aux adultes."
+            },
+            {
+                q: "Parmi les propositions suivantes, laquelle fait partie des « 5 Règles d'Or du Numérique » ?",
+                options: [
+                    "Choisir le bon outil, adapter son langage, protéger sa vie privée, respecter la Nétiquette et parler à un adulte en cas de doute",
+                    "Partager ses mots de passe avec ses amis proches pour prouver sa confiance",
+                    "Écrire en majuscules pour montrer son autorité sur les groupes",
+                    "Envoyer des messages sur le tchat de classe à 3 heures du matin"
+                ],
+                answer: 0,
+                feedback: "Ces 5 règles d'or synthétisent les piliers du comportement responsable et citoyen dans l'environnement numérique."
+            }
+        ];
+
+        // GESTION DE L'ÉTAT DU QUIZ
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let isAnswered = false;
+
+        // ÉLÉMENTS DU DOM
+        const quizView = document.getElementById('quiz-view');
+        const resultsView = document.getElementById('results-view');
+        const questionText = document.getElementById('question-text');
+        const questionIndexLabel = document.getElementById('question-index-label');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const liveScore = document.getElementById('live-score');
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackDesc = document.getElementById('feedback-desc');
+        const nextBtn = document.getElementById('next-btn');
+
+        // ALGORITHME DE SHUFFLE (FISHER-YATES)
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        // INITIALISATION DU QUIZ
+        function initQuiz() {
+            // Brassage des 40 questions et des options de chaque question
+            questions = shuffleArray(rawQuestions).map(q => {
+                const mappedOptions = q.options.map((optText, originalIndex) => ({
+                    text: optText,
+                    isCorrect: originalIndex === q.answer
+                }));
+                return {
+                    q: q.q,
+                    options: shuffleArray(mappedOptions),
+                    feedback: q.feedback
+                };
+            });
+
+            currentIndex = 0;
+            score = 0;
+            isAnswered = false;
+
+            quizView.style.display = 'block';
+            resultsView.style.display = 'none';
+            liveScore.innerText = `Score: 0 / ${questions.length}`;
+
+            renderQuestion();
+        }
+
+        // AFFICHAGE D'UNE QUESTION
+        function renderQuestion() {
+            isAnswered = false;
+            nextBtn.disabled = true;
+            feedbackBox.style.display = 'none';
+
+            const total = questions.length;
+            const currentNum = currentIndex + 1;
+            const qData = questions[currentIndex];
+
+            // Progression
+            progressText.innerText = `Question ${currentNum} sur ${total}`;
+            questionIndexLabel.innerText = `Question ${currentNum} / ${total}`;
+            progressBar.style.width = `${(currentNum / total) * 100}%`;
+
+            // Texte de la question
+            questionText.innerText = qData.q;
+
+            // Options
+            optionsContainer.innerHTML = '';
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-button';
+                btn.innerText = opt.text;
+                btn.onclick = () => handleSelectOption(idx, opt.isCorrect);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Libellé du bouton suivant
+            if (currentIndex === total - 1) {
+                nextBtn.innerText = "Consulter le Bilan Final ➔";
+            } else {
+                nextBtn.innerText = "Question suivante ➔";
+            }
+        }
+
+        // SÉLECTION D'UNE RÉPONSE
+        function handleSelectOption(selectedIdx, isCorrect) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const buttons = optionsContainer.querySelectorAll('.option-button');
+            const qData = questions[currentIndex];
+
+            // Verrouillage des options et stylisation immédiate
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (qData.options[idx].isCorrect) {
+                    btn.classList.add('correct');
+                } else if (idx === selectedIdx) {
+                    btn.classList.add('wrong');
+                } else {
+                    btn.classList.add('dimmed');
+                }
+            });
+
+            // Score et feedback
+            if (isCorrect) {
+                score++;
+                feedbackBox.className = 'feedback-container correct';
+                feedbackTitle.innerText = "✓ Bonne réponse !";
+            } else {
+                feedbackBox.className = 'feedback-container wrong';
+                feedbackTitle.innerText = "✕ Mauvaise réponse !";
+            }
+
+            liveScore.innerText = `Score: ${score} / ${questions.length}`;
+            feedbackDesc.innerText = qData.feedback;
+            feedbackBox.style.display = 'block';
+
+            nextBtn.disabled = false;
+        }
+
+        // QUESTION SUIVANTE
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        // BILAN FINAL
+        function showResults() {
+            quizView.style.display = 'none';
+            resultsView.style.display = 'block';
+
+            const total = questions.length;
+            const percent = Math.round((score / total) * 100);
+
+            document.getElementById('final-percent').innerText = `${percent}%`;
+            document.getElementById('stat-correct-count').innerText = score;
+            document.getElementById('stat-wrong-count').innerText = total - score;
+
+            const titleEl = document.getElementById('result-title-text');
+            const descEl = document.getElementById('result-desc-text');
+
+            if (percent >= 90) {
+                titleEl.innerText = "🏆 Citoyen Numérique Exemplaire !";
+                descEl.innerText = "Félicitations ! Tu maîtrises sur le bout des doigts les règles de politesse par courriel, l'anatomie d'un mail (À, Cc, Cci), la Nétiquette, la protection de la vie privée et les réflexes face au cyberharcèlement (3018).";
+            } else if (percent >= 75) {
+                titleEl.innerText = "⭐ Internaute Averti";
+                descEl.innerText = "Très bon score ! Tu as d'excellents réflexes pour communiquer en ligne de manière efficace, courtoise et sécurisée au collège comme à la maison.";
+            } else if (percent >= 50) {
+                titleEl.innerText = "📱 Apprenti Communicant";
+                descEl.innerText = "Des bases acquises, mais attention à certains pièges : revois bien l'usage des champs Cci, les règles de la Nétiquette et les étapes de réaction face au cyberharcèlement.";
+            } else {
+                titleEl.innerText = "⚠️ Prudence et Révision Nécessaires";
+                descEl.innerText = "Attention aux mauvaises pratiques sur Internet ! Relis attentivement le guide de survie, mémorise les 5 règles d'or et le numéro 3018, puis réessaye le test.";
+            }
+        }
+
+        // REDÉMARRAGE DU TEST
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Démarrage automatique
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
